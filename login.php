@@ -1,4 +1,11 @@
 <?php
+/**
+ * File: login.php
+ * Deskripsi: Halaman autentikasi untuk memverifikasi username dan password petugas.
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
 session_start();
 require_once 'config/koneksi.php';
 

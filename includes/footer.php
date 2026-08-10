@@ -1,3 +1,13 @@
+<?php
+/**
+ * File: footer.php
+ * Deskripsi: Template bagian bawah (penutup body, inisialisasi JS dan Library) yang digunakan di seluruh halaman.
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
+?>
+
         </div> <!-- End Main Content -->
     </div> <!-- End Row -->
 </div> <!-- End Container -->

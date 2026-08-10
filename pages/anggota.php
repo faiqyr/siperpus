@@ -1,4 +1,11 @@
 <?php
+/**
+ * File: anggota.php
+ * Deskripsi: Halaman antarmuka untuk operasi Kelola Data Anggota (CRUD).
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
 require_once '../includes/header.php';
 require_once '../functions/anggota.func.php';
 

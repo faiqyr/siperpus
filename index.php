@@ -1,4 +1,11 @@
 <?php
+/**
+ * File: index.php
+ * Deskripsi: Halaman Dashboard utama untuk menampilkan statistik ringkasan perpustakaan.
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
 require_once 'includes/header.php';
 
 // Get total books

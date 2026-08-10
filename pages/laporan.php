@@ -1,4 +1,11 @@
 <?php
+/**
+ * File: laporan.php
+ * Deskripsi: Halaman antarmuka untuk menampilkan laporan keterlambatan dan buku yang belum dikembalikan.
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
 require_once '../includes/header.php';
 
 // Filter is strictly handled inside DataTables or with simple PHP if we want.

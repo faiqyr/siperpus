@@ -1,4 +1,11 @@
 <?php
+/**
+ * File: buku.php
+ * Deskripsi: Halaman antarmuka untuk operasi Kelola Data Buku (CRUD).
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
 require_once '../includes/header.php';
 require_once '../functions/buku.func.php';
 

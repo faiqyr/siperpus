@@ -1,4 +1,11 @@
 <?php
+/**
+ * File: header.php
+ * Deskripsi: Template bagian atas (head, sidebar, dan navbar) yang digunakan di seluruh halaman.
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../functions/helper.php';

@@ -1,4 +1,11 @@
 <?php
+/**
+ * File: koneksi.php
+ * Deskripsi: Menyimpan konfigurasi environment dan koneksi utama ke database MySQL menggunakan PDO.
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
 // Tentukan lingkungan aplikasi: 'development' atau 'production'
 define('ENVIRONMENT', 'development');
 

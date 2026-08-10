@@ -1,4 +1,11 @@
 <?php
+/**
+ * File: peminjaman.php
+ * Deskripsi: Halaman antarmuka untuk mencatat dan memproses transaksi peminjaman serta pengembalian buku.
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
 require_once '../includes/header.php';
 require_once '../functions/pinjam.func.php';
 

@@ -1,4 +1,11 @@
 <?php
+/**
+ * File: pinjam.func.php
+ * Deskripsi: Kumpulan fungsi khusus untuk menangani operasi transaksi Peminjaman dan Pengembalian.
+ * Author: @faiqyr
+ * Tanggal Dibuat: 2026-08-10
+ * Versi: 1.0.0
+ */
 require_once __DIR__ . '/../config/koneksi.php';
 
 /**
@@ -11,8 +18,11 @@ require_once __DIR__ . '/../config/koneksi.php';
  * Fungsi usort() pada PHP menggunakan algoritma pengurutan (seperti Quicksort/Mergesort)
  * yang memiliki kompleksitas waktu rata-rata O(N log N). Ini merupakan cara yang 
  * sangat efisien dan standar di industri untuk mengurutkan kumpulan data dalam memori.
+ *
+ * @param array $arrayPeminjaman Kumpulan objek data transaksi peminjaman.
+ * @return array Array transaksi yang sudah terurut berdasarkan tanggal batas kembali.
  */
-function urutkanPeminjaman($arrayPeminjaman) {
+function urutkanPeminjaman(array $arrayPeminjaman): array {
     usort($arrayPeminjaman, function($a, $b) {
         $waktuA = strtotime($a->batas_kembali);
         $waktuB = strtotime($b->batas_kembali);
@@ -24,7 +34,12 @@ function urutkanPeminjaman($arrayPeminjaman) {
     return $arrayPeminjaman;
 }
 
-function getAllPeminjaman() {
+/**
+ * Mengambil seluruh data transaksi peminjaman beserta relasinya.
+ * 
+ * @return array Array of objects dari seluruh data transaksi.
+ */
+function getAllPeminjaman(): array {
     global $conn;
     $query = "SELECT p.*, a.nama as nama_anggota, a.kode_anggota, b.judul as judul_buku, u.nama_lengkap as nama_petugas 
               FROM peminjaman p 
@@ -36,7 +51,17 @@ function getAllPeminjaman() {
     return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 
-function insertPeminjaman($data, $userId) {
+/**
+ * Menyimpan data peminjaman buku dan mengurangi stok buku.
+ * 
+ * Menggunakan "FOR UPDATE" pada saat mengecek stok untuk mencegah Race Condition 
+ * jika ada petugas lain yang melakukan transaksi di waktu bersamaan (Pessimistic Locking).
+ * 
+ * @param array $data Data transaksi dari form POST ($_POST).
+ * @param int $userId ID Petugas yang melakukan transaksi.
+ * @return bool True jika berhasil, false jika stok buku kosong.
+ */
+function insertPeminjaman(array $data, int $userId): bool {
     global $conn;
     
     // Check stock
@@ -62,14 +87,29 @@ function insertPeminjaman($data, $userId) {
     return false; // Stock empty
 }
 
-function getPeminjamanById($id) {
+/**
+ * Mengambil detail transaksi spesifik beserta info bukunya berdasarkan ID Transaksi.
+ * 
+ * @param int $id ID Transaksi peminjaman.
+ * @return object|bool Objek data transaksi, atau false jika tidak ditemukan.
+ */
+function getPeminjamanById(int $id) {
     global $conn;
     $stmt = $conn->prepare("SELECT p.*, b.judul, b.id as buku_id, a.nama as nama_anggota FROM peminjaman p JOIN buku b ON p.buku_id = b.id JOIN anggota a ON p.anggota_id = a.id WHERE p.id = :id");
     $stmt->execute(['id' => $id]);
     return $stmt->fetch(PDO::FETCH_OBJ);
 }
 
-function prosesKembali($id, $tanggalKembali, $denda, $bukuId) {
+/**
+ * Memproses pengembalian buku, menyimpan denda, dan mengembalikan stok.
+ * 
+ * @param int $id ID Transaksi peminjaman yang akan diselesaikan.
+ * @param string $tanggalKembali Tanggal buku dikembalikan (format Y-m-d).
+ * @param int $denda Nominal denda dalam rupiah (0 jika tidak ada).
+ * @param int $bukuId ID Buku untuk mengembalikan stok.
+ * @return bool True jika berhasil di-update.
+ */
+function prosesKembali(int $id, string $tanggalKembali, int $denda, int $bukuId): bool {
     global $conn;
     $updatePeminjaman = $conn->prepare("UPDATE peminjaman SET status = 'Dikembalikan', tanggal_dikembalikan = :tanggal_kembali, denda = :denda WHERE id = :id");
     $updatePeminjaman->execute([
