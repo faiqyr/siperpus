@@ -90,14 +90,8 @@ if ($action == 'add') {
     }
 
     $tanggalSekarang = date('Y-m-d');
-    $hariTerlambat = 0;
-    $denda = 0;
-
-    if (strtotime($tanggalSekarang) > strtotime($transaksi->batas_kembali)) {
-        $diff = strtotime($tanggalSekarang) - strtotime($transaksi->batas_kembali);
-        $hariTerlambat = floor($diff / (60 * 60 * 24));
-        $denda = $hariTerlambat * 1000;
-    }
+    $denda = hitungDenda($transaksi->batas_kembali, $tanggalSekarang);
+    $hariTerlambat = $denda > 0 ? ($denda / 1000) : 0;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {

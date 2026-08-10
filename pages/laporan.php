@@ -56,13 +56,9 @@ $tanggalSekarang = date('Y-m-d');
                 <tbody>
                     <?php foreach($laporanList as $index => $row): ?>
                     <?php 
-                        $hariTerlambat = 0;
-                        $estimasiDenda = 0;
-                        if (strtotime($tanggalSekarang) > strtotime($row->batas_kembali)) {
-                            $diff = strtotime($tanggalSekarang) - strtotime($row->batas_kembali);
-                            $hariTerlambat = floor($diff / (60 * 60 * 24));
-                            $estimasiDenda = $hariTerlambat * 1000;
-                        }
+                        require_once '../functions/pinjam.func.php';
+                        $estimasiDenda = hitungDenda($row->batas_kembali, $tanggalSekarang);
+                        $hariTerlambat = $estimasiDenda > 0 ? ($estimasiDenda / 1000) : 0;
                     ?>
                     <tr>
                         <td><?= $index + 1 ?></td>

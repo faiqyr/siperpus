@@ -122,4 +122,24 @@ function prosesKembali(int $id, string $tanggalKembali, int $denda, int $bukuId)
     $updateStok->execute(['buku_id' => $bukuId]);
     return true;
 }
+
+/**
+ * Menghitung denda keterlambatan pengembalian buku.
+ *
+ * @param string $tanggalJatuhTempo Tanggal jatuh tempo (format Y-m-d)
+ * @param string $tanggalDikembalikan Tanggal buku dikembalikan (format Y-m-d)
+ * @return int Nominal denda dalam rupiah, 0 jika tidak terlambat
+ */
+function hitungDenda(string $tanggalJatuhTempo, string $tanggalDikembalikan): int {
+    $timeJatuhTempo = strtotime($tanggalJatuhTempo);
+    $timeDikembalikan = strtotime($tanggalDikembalikan);
+    
+    if ($timeDikembalikan <= $timeJatuhTempo) {
+        return 0; // Tidak terlambat
+    }
+    
+    $diff = $timeDikembalikan - $timeJatuhTempo;
+    $hariTerlambat = floor($diff / (60 * 60 * 24));
+    return (int) ($hariTerlambat * 1000);
+}
 ?>
