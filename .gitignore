@@ -1,0 +1,19 @@
+# Vendor / Dependencies
+vendor/
+node_modules/
+
+# Local Configurations
+config/koneksi_local.php
+.env
+
+# Temporary / OS Files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+scratch/
+
+# IDE Files
+.vscode/
+.idea/

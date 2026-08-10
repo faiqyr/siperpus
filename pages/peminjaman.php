@@ -6,8 +6,8 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 
 if ($action == 'add') {
     // Ambil data anggota dan buku
-    $anggota_list = $conn->query("SELECT id, kode_anggota, nama FROM anggota ORDER BY nama ASC")->fetchAll();
-    $buku_list = $conn->query("SELECT id, judul, stok FROM buku WHERE stok > 0 ORDER BY judul ASC")->fetchAll();
+    $anggotaList = $conn->query("SELECT id, kode_anggota, nama FROM anggota ORDER BY nama ASC")->fetchAll();
+    $bukuList = $conn->query("SELECT id, judul, stok FROM buku WHERE stok > 0 ORDER BY judul ASC")->fetchAll();
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
@@ -43,7 +43,7 @@ if ($action == 'add') {
                     <label for="anggota_id" class="form-label">Pilih Anggota</label>
                     <select class="form-select" id="anggota_id" name="anggota_id" required>
                         <option value="">-- Pilih Anggota --</option>
-                        <?php foreach($anggota_list as $anggota): ?>
+                        <?php foreach($anggotaList as $anggota): ?>
                             <option value="<?= $anggota->id ?>"><?= htmlspecialchars($anggota->kode_anggota . ' - ' . $anggota->nama) ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -52,7 +52,7 @@ if ($action == 'add') {
                     <label for="buku_id" class="form-label">Pilih Buku</label>
                     <select class="form-select" id="buku_id" name="buku_id" required>
                         <option value="">-- Pilih Buku (Stok Tersedia) --</option>
-                        <?php foreach($buku_list as $buku): ?>
+                        <?php foreach($bukuList as $buku): ?>
                             <option value="<?= $buku->id ?>"><?= htmlspecialchars($buku->judul . ' (Stok: ' . $buku->stok . ')') ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -81,20 +81,20 @@ if ($action == 'add') {
         exit();
     }
 
-    $tanggal_sekarang = date('Y-m-d');
-    $hari_terlambat = 0;
+    $tanggalSekarang = date('Y-m-d');
+    $hariTerlambat = 0;
     $denda = 0;
 
-    if (strtotime($tanggal_sekarang) > strtotime($transaksi->batas_kembali)) {
-        $diff = strtotime($tanggal_sekarang) - strtotime($transaksi->batas_kembali);
-        $hari_terlambat = floor($diff / (60 * 60 * 24));
-        $denda = $hari_terlambat * 1000;
+    if (strtotime($tanggalSekarang) > strtotime($transaksi->batas_kembali)) {
+        $diff = strtotime($tanggalSekarang) - strtotime($transaksi->batas_kembali);
+        $hariTerlambat = floor($diff / (60 * 60 * 24));
+        $denda = $hariTerlambat * 1000;
     }
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
             $conn->beginTransaction();
-            prosesKembali($id, $tanggal_sekarang, $denda, $transaksi->buku_id);
+            prosesKembali($id, $tanggalSekarang, $denda, $transaksi->buku_id);
             $conn->commit();
             setFlash('success', 'Buku berhasil dikembalikan!');
             header("Location: peminjaman.php");
@@ -118,13 +118,13 @@ if ($action == 'add') {
                         <tr><th>Judul Buku</th><td>: <?= htmlspecialchars($transaksi->judul) ?></td></tr>
                         <tr><th>Tanggal Pinjam</th><td>: <?= htmlspecialchars($transaksi->tanggal_pinjam) ?></td></tr>
                         <tr><th>Batas Kembali</th><td>: <span class="fw-bold"><?= htmlspecialchars($transaksi->batas_kembali) ?></span></td></tr>
-                        <tr><th>Tanggal Hari Ini</th><td>: <?= $tanggal_sekarang ?></td></tr>
+                        <tr><th>Tanggal Hari Ini</th><td>: <?= $tanggalSekarang ?></td></tr>
                     </table>
                 </div>
                 <div class="col-md-6">
-                    <div class="alert <?= $hari_terlambat > 0 ? 'alert-danger' : 'alert-info' ?>">
+                    <div class="alert <?= $hariTerlambat > 0 ? 'alert-danger' : 'alert-info' ?>">
                         <h5 class="alert-heading">Informasi Keterlambatan</h5>
-                        <p class="mb-0">Terlambat: <strong><?= $hari_terlambat ?> hari</strong></p>
+                        <p class="mb-0">Terlambat: <strong><?= $hariTerlambat ?> hari</strong></p>
                         <p class="mb-0">Denda: <strong>Rp <?= number_format($denda, 0, ',', '.') ?></strong></p>
                     </div>
                 </div>
@@ -156,10 +156,10 @@ if ($action == 'add') {
 <?php
 } else {
     // List view
-    $peminjaman_list = getAllPeminjaman();
+    $peminjamanList = getAllPeminjaman();
     
     // Implementasi Requirement: Fungsi pengurutan array
-    $peminjaman_list = urutkanPeminjaman($peminjaman_list);
+    $peminjamanList = urutkanPeminjaman($peminjamanList);
 ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4>Data Transaksi Peminjaman</h4>
@@ -184,7 +184,7 @@ if ($action == 'add') {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach($peminjaman_list as $row): ?>
+                        <?php foreach($peminjamanList as $row): ?>
                         <tr>
                             <td><?= htmlspecialchars($row->kode_peminjaman) ?></td>
                             <td><?= htmlspecialchars($row->nama_anggota) ?> <br><small class="text-muted">(<?= htmlspecialchars($row->kode_anggota) ?>)</small></td>

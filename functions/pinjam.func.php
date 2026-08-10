@@ -12,16 +12,16 @@ require_once __DIR__ . '/../config/koneksi.php';
  * yang memiliki kompleksitas waktu rata-rata O(N log N). Ini merupakan cara yang 
  * sangat efisien dan standar di industri untuk mengurutkan kumpulan data dalam memori.
  */
-function urutkanPeminjaman($array_peminjaman) {
-    usort($array_peminjaman, function($a, $b) {
-        $waktu_a = strtotime($a->batas_kembali);
-        $waktu_b = strtotime($b->batas_kembali);
-        if ($waktu_a == $waktu_b) {
+function urutkanPeminjaman($arrayPeminjaman) {
+    usort($arrayPeminjaman, function($a, $b) {
+        $waktuA = strtotime($a->batas_kembali);
+        $waktuB = strtotime($b->batas_kembali);
+        if ($waktuA == $waktuB) {
             return 0;
         }
-        return ($waktu_a < $waktu_b) ? -1 : 1;
+        return ($waktuA < $waktuB) ? -1 : 1;
     });
-    return $array_peminjaman;
+    return $arrayPeminjaman;
 }
 
 function getAllPeminjaman() {
@@ -36,13 +36,13 @@ function getAllPeminjaman() {
     return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 
-function insertPeminjaman($data, $user_id) {
+function insertPeminjaman($data, $userId) {
     global $conn;
     
     // Check stock
-    $cek_stok = $conn->prepare("SELECT stok FROM buku WHERE id = :buku_id FOR UPDATE");
-    $cek_stok->execute(['buku_id' => $data['buku_id']]);
-    $buku = $cek_stok->fetch();
+    $cekStok = $conn->prepare("SELECT stok FROM buku WHERE id = :buku_id FOR UPDATE");
+    $cekStok->execute(['buku_id' => $data['buku_id']]);
+    $buku = $cekStok->fetch();
 
     if ($buku && $buku->stok > 0) {
         $stmt = $conn->prepare("INSERT INTO peminjaman (kode_peminjaman, anggota_id, buku_id, user_id, tanggal_pinjam, batas_kembali, status) VALUES (:kode, :anggota_id, :buku_id, :user_id, :tanggal_pinjam, :batas_kembali, 'Dipinjam')");
@@ -50,13 +50,13 @@ function insertPeminjaman($data, $user_id) {
             'kode' => $data['kode_peminjaman'],
             'anggota_id' => $data['anggota_id'],
             'buku_id' => $data['buku_id'],
-            'user_id' => $user_id,
+            'user_id' => $userId,
             'tanggal_pinjam' => $data['tanggal_pinjam'],
             'batas_kembali' => $data['batas_kembali']
         ]);
 
-        $update_stok = $conn->prepare("UPDATE buku SET stok = stok - 1 WHERE id = :buku_id");
-        $update_stok->execute(['buku_id' => $data['buku_id']]);
+        $updateStok = $conn->prepare("UPDATE buku SET stok = stok - 1 WHERE id = :buku_id");
+        $updateStok->execute(['buku_id' => $data['buku_id']]);
         return true;
     }
     return false; // Stock empty
@@ -69,17 +69,17 @@ function getPeminjamanById($id) {
     return $stmt->fetch(PDO::FETCH_OBJ);
 }
 
-function prosesKembali($id, $tanggal_kembali, $denda, $buku_id) {
+function prosesKembali($id, $tanggalKembali, $denda, $bukuId) {
     global $conn;
-    $update_peminjaman = $conn->prepare("UPDATE peminjaman SET status = 'Dikembalikan', tanggal_dikembalikan = :tanggal_kembali, denda = :denda WHERE id = :id");
-    $update_peminjaman->execute([
-        'tanggal_kembali' => $tanggal_kembali,
+    $updatePeminjaman = $conn->prepare("UPDATE peminjaman SET status = 'Dikembalikan', tanggal_dikembalikan = :tanggal_kembali, denda = :denda WHERE id = :id");
+    $updatePeminjaman->execute([
+        'tanggal_kembali' => $tanggalKembali,
         'denda' => $denda,
         'id' => $id
     ]);
 
-    $update_stok = $conn->prepare("UPDATE buku SET stok = stok + 1 WHERE id = :buku_id");
-    $update_stok->execute(['buku_id' => $buku_id]);
+    $updateStok = $conn->prepare("UPDATE buku SET stok = stok + 1 WHERE id = :buku_id");
+    $updateStok->execute(['buku_id' => $bukuId]);
     return true;
 }
 ?>

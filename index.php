@@ -3,19 +3,19 @@ require_once 'includes/header.php';
 
 // Get total books
 $stmt = $conn->query("SELECT COUNT(*) as total FROM buku");
-$total_buku = $stmt->fetch()->total;
+$totalBuku = $stmt->fetch()->total;
 
 // Get total members
 $stmt = $conn->query("SELECT COUNT(*) as total FROM anggota");
-$total_anggota = $stmt->fetch()->total;
+$totalAnggota = $stmt->fetch()->total;
 
 // Get total active borrowings
 $stmt = $conn->query("SELECT COUNT(*) as total FROM peminjaman WHERE status = 'Dipinjam'");
-$total_peminjaman = $stmt->fetch()->total;
+$totalPeminjaman = $stmt->fetch()->total;
 
 // Get total late returns (not returned yet, but past due date)
 $stmt = $conn->query("SELECT COUNT(*) as total FROM peminjaman WHERE status = 'Dipinjam' AND batas_kembali < CURDATE()");
-$total_terlambat = $stmt->fetch()->total;
+$totalTerlambat = $stmt->fetch()->total;
 ?>
 
 <div class="row">
@@ -23,7 +23,7 @@ $total_terlambat = $stmt->fetch()->total;
         <div class="card bg-primary text-white">
             <div class="card-body">
                 <h5 class="card-title">Total Buku</h5>
-                <h2 class="display-5"><?= $total_buku ?></h2>
+                <h2 class="display-5"><?= $totalBuku ?></h2>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@ $total_terlambat = $stmt->fetch()->total;
         <div class="card bg-success text-white">
             <div class="card-body">
                 <h5 class="card-title">Total Anggota</h5>
-                <h2 class="display-5"><?= $total_anggota ?></h2>
+                <h2 class="display-5"><?= $totalAnggota ?></h2>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@ $total_terlambat = $stmt->fetch()->total;
         <div class="card bg-warning text-dark">
             <div class="card-body">
                 <h5 class="card-title">Sedang Dipinjam</h5>
-                <h2 class="display-5"><?= $total_peminjaman ?></h2>
+                <h2 class="display-5"><?= $totalPeminjaman ?></h2>
             </div>
         </div>
     </div>
@@ -47,7 +47,7 @@ $total_terlambat = $stmt->fetch()->total;
         <div class="card bg-danger text-white">
             <div class="card-body">
                 <h5 class="card-title">Terlambat</h5>
-                <h2 class="display-5"><?= $total_terlambat ?></h2>
+                <h2 class="display-5"><?= $totalTerlambat ?></h2>
             </div>
         </div>
     </div>

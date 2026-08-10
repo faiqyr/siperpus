@@ -40,12 +40,12 @@ require_once __DIR__ . '/../functions/helper.php';
         <div class="col-12 col-md-3 col-lg-2 px-0 sidebar text-white">
             <h5 class="text-center mb-4 mt-2 fw-bold text-white"><i class="bi bi-book-half text-primary"></i> SIPERpus</h5>
             <div class="d-flex flex-row flex-md-column overflow-auto">
-                <a href="<?= $base_url ?>/index.php"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-                <a href="<?= $base_url ?>/pages/buku.php"><i class="bi bi-book me-2"></i> Data Buku</a>
-                <a href="<?= $base_url ?>/pages/anggota.php"><i class="bi bi-people me-2"></i> Data Anggota</a>
-                <a href="<?= $base_url ?>/pages/peminjaman.php"><i class="bi bi-arrow-left-right me-2"></i> Transaksi</a>
-                <a href="<?= $base_url ?>/pages/laporan.php"><i class="bi bi-file-earmark-text me-2"></i> Laporan</a>
-                <a href="<?= $base_url ?>/logout.php" class="text-danger mt-md-5"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+                <a href="<?= $baseUrl ?>/index.php"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+                <a href="<?= $baseUrl ?>/pages/buku.php"><i class="bi bi-book me-2"></i> Data Buku</a>
+                <a href="<?= $baseUrl ?>/pages/anggota.php"><i class="bi bi-people me-2"></i> Data Anggota</a>
+                <a href="<?= $baseUrl ?>/pages/peminjaman.php"><i class="bi bi-arrow-left-right me-2"></i> Transaksi</a>
+                <a href="<?= $baseUrl ?>/pages/laporan.php"><i class="bi bi-file-earmark-text me-2"></i> Laporan</a>
+                <a href="<?= $baseUrl ?>/logout.php" class="text-danger mt-md-5"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
             </div>
         </div>
         

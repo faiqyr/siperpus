@@ -13,9 +13,9 @@ $query = "SELECT p.*, a.nama as nama_anggota, a.kode_anggota, b.judul as judul_b
           ORDER BY p.batas_kembali ASC";
 
 $stmt = $conn->query($query);
-$laporan_list = $stmt->fetchAll(PDO::FETCH_OBJ);
+$laporanList = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-$tanggal_sekarang = date('Y-m-d');
+$tanggalSekarang = date('Y-m-d');
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -47,14 +47,14 @@ $tanggal_sekarang = date('Y-m-d');
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($laporan_list as $index => $row): ?>
+                    <?php foreach($laporanList as $index => $row): ?>
                     <?php 
-                        $hari_terlambat = 0;
-                        $estimasi_denda = 0;
-                        if (strtotime($tanggal_sekarang) > strtotime($row->batas_kembali)) {
-                            $diff = strtotime($tanggal_sekarang) - strtotime($row->batas_kembali);
-                            $hari_terlambat = floor($diff / (60 * 60 * 24));
-                            $estimasi_denda = $hari_terlambat * 1000;
+                        $hariTerlambat = 0;
+                        $estimasiDenda = 0;
+                        if (strtotime($tanggalSekarang) > strtotime($row->batas_kembali)) {
+                            $diff = strtotime($tanggalSekarang) - strtotime($row->batas_kembali);
+                            $hariTerlambat = floor($diff / (60 * 60 * 24));
+                            $estimasiDenda = $hariTerlambat * 1000;
                         }
                     ?>
                     <tr>
@@ -66,15 +66,15 @@ $tanggal_sekarang = date('Y-m-d');
                         <td><?= htmlspecialchars($row->tanggal_pinjam) ?></td>
                         <td><?= htmlspecialchars($row->batas_kembali) ?></td>
                         <td>
-                            <?php if($hari_terlambat > 0): ?>
-                                <span class="badge bg-danger">Terlambat <?= $hari_terlambat ?> Hari</span>
+                            <?php if($hariTerlambat > 0): ?>
+                                <span class="badge bg-danger">Terlambat <?= $hariTerlambat ?> Hari</span>
                             <?php else: ?>
                                 <span class="badge bg-warning text-dark">Belum Kembali</span>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <?php if($estimasi_denda > 0): ?>
-                                Rp <?= number_format($estimasi_denda, 0, ',', '.') ?>
+                            <?php if($estimasiDenda > 0): ?>
+                                Rp <?= number_format($estimasiDenda, 0, ',', '.') ?>
                             <?php else: ?>
                                 -
                             <?php endif; ?>

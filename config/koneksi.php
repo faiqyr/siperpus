@@ -3,7 +3,7 @@ $host = "localhost";
 $username = "root";
 $password = "";
 $database = "db_perpustakaan";
-$base_url = "http://localhost/sertifikasi";
+$baseUrl = "http://localhost/sertifikasi";
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$database;charset=utf8", $username, $password);

@@ -134,7 +134,7 @@ if ($action == 'add') {
     exit();
 } else {
     // List view
-    $anggota_list = getAllAnggota();
+    $anggotaList = getAllAnggota();
 ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4>Kelola Data Anggota</h4>
@@ -158,7 +158,7 @@ if ($action == 'add') {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach($anggota_list as $index => $anggota): ?>
+                        <?php foreach($anggotaList as $index => $anggota): ?>
                         <tr>
                             <td><?= $index + 1 ?></td>
                             <td><?= htmlspecialchars($anggota->kode_anggota) ?></td>

@@ -14,11 +14,11 @@ require_once __DIR__ . '/../config/koneksi.php';
  * berjalan pada waktu rata-rata O(M), maka kompleksitas akhirnya O(N * M). Ini sangat 
  * efisien untuk data dalam jumlah ratusan/ribuan di memori.
  */
-function cariBuku($array_buku, $keyword) {
+function cariBuku($arrayBuku, $keyword) {
     $hasil = [];
     $keyword = strtolower(trim($keyword));
     
-    foreach ($array_buku as $buku) {
+    foreach ($arrayBuku as $buku) {
         $judul = strtolower($buku->judul);
         $pengarang = strtolower($buku->pengarang);
         

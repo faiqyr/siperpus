@@ -140,9 +140,9 @@ if ($action == 'add') {
 } else {
     // List view
     $search = isset($_GET['search']) ? $_GET['search'] : '';
-    $buku_list = getAllBuku();
+    $bukuList = getAllBuku();
     if ($search) {
-        $buku_list = cariBuku($buku_list, $search);
+        $bukuList = cariBuku($bukuList, $search);
     }
 ?>
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -179,7 +179,7 @@ if ($action == 'add') {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach($buku_list as $index => $buku): ?>
+                        <?php foreach($bukuList as $index => $buku): ?>
                         <tr>
                             <td><?= $index + 1 ?></td>
                             <td><?= htmlspecialchars($buku->kode_buku) ?></td>
