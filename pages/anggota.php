@@ -75,6 +75,7 @@ if ($action == 'add') {
     }
     $anggota = getAnggotaById($id);
     if (!$anggota) {
+        setFlash('error', 'Mohon maaf, data anggota yang Anda cari tidak ditemukan atau sudah dihapus.');
         header("Location: anggota.php");
         exit();
     }

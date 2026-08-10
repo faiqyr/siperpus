@@ -77,6 +77,7 @@ if ($action == 'add') {
     $transaksi = getPeminjamanById($id);
 
     if (!$transaksi || $transaksi->status == 'Dikembalikan') {
+        setFlash('error', 'Mohon maaf, data transaksi yang Anda cari tidak ditemukan atau sudah diproses.');
         header("Location: peminjaman.php");
         exit();
     }

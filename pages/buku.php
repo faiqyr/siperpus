@@ -77,6 +77,7 @@ if ($action == 'add') {
     }
     $buku = getBukuById($id);
     if (!$buku) {
+        setFlash('error', 'Mohon maaf, data buku yang Anda cari tidak ditemukan atau sudah dihapus.');
         header("Location: buku.php");
         exit();
     }
