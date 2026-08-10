@@ -4,7 +4,7 @@ require_once '../includes/header.php';
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
 if ($search) {
-    $stmt = $conn->prepare("SELECT * FROM anggota WHERE nama LIKE :search OR nomor_anggota LIKE :search ORDER BY id DESC");
+    $stmt = $conn->prepare("SELECT * FROM anggota WHERE nama LIKE :search OR kode_anggota LIKE :search ORDER BY id DESC");
     $stmt->execute(['search' => "%$search%"]);
 } else {
     $stmt = $conn->query("SELECT * FROM anggota ORDER BY id DESC");
@@ -21,7 +21,7 @@ $anggota_list = $stmt->fetchAll();
     <div class="card-body">
         <form method="GET" class="mb-4">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan Nama atau Nomor Anggota..." value="<?= htmlspecialchars($search) ?>">
+                <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan Nama atau Kode Anggota..." value="<?= htmlspecialchars($search) ?>">
                 <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i> Cari</button>
                 <?php if($search): ?>
                     <a href="index.php" class="btn btn-outline-danger">Reset</a>
@@ -34,10 +34,11 @@ $anggota_list = $stmt->fetchAll();
                 <thead class="table-dark">
                     <tr>
                         <th>No</th>
-                        <th>Nomor Anggota</th>
+                        <th>Kode Anggota</th>
                         <th>Nama</th>
                         <th>L/P</th>
                         <th>No Telp</th>
+                        <th>Email</th>
                         <th>Alamat</th>
                         <th>Aksi</th>
                     </tr>
@@ -47,10 +48,11 @@ $anggota_list = $stmt->fetchAll();
                         <?php foreach($anggota_list as $index => $anggota): ?>
                         <tr>
                             <td><?= $index + 1 ?></td>
-                            <td><?= htmlspecialchars($anggota->nomor_anggota) ?></td>
+                            <td><?= htmlspecialchars($anggota->kode_anggota) ?></td>
                             <td><?= htmlspecialchars($anggota->nama) ?></td>
                             <td><?= $anggota->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' ?></td>
                             <td><?= htmlspecialchars($anggota->no_telp) ?></td>
+                            <td><?= htmlspecialchars($anggota->email) ?></td>
                             <td><?= htmlspecialchars($anggota->alamat) ?></td>
                             <td>
                                 <a href="edit.php?id=<?= $anggota->id ?>" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i> Edit</a>
