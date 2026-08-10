@@ -7,18 +7,19 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     nama_lengkap VARCHAR(100) NOT NULL,
-    role ENUM('petugas') DEFAULT 'petugas',
+    role ENUM('admin', 'petugas') DEFAULT 'petugas',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table for Books (Buku)
 CREATE TABLE IF NOT EXISTS buku (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    kode_buku VARCHAR(20) UNIQUE NOT NULL,
     judul VARCHAR(255) NOT NULL,
     pengarang VARCHAR(100) NOT NULL,
     penerbit VARCHAR(100) NOT NULL,
     tahun_terbit YEAR NOT NULL,
-    isbn VARCHAR(20) UNIQUE NOT NULL,
+    kategori VARCHAR(50) NOT NULL,
     stok INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -26,24 +27,26 @@ CREATE TABLE IF NOT EXISTS buku (
 -- Table for Members (Anggota)
 CREATE TABLE IF NOT EXISTS anggota (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nomor_anggota VARCHAR(20) NOT NULL UNIQUE,
+    kode_anggota VARCHAR(20) NOT NULL UNIQUE,
     nama VARCHAR(100) NOT NULL,
     jenis_kelamin ENUM('L', 'P') NOT NULL,
     alamat TEXT NOT NULL,
-    no_telp VARCHAR(15) NOT NULL,
+    no_telp VARCHAR(20) NOT NULL,
+    email VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table for Borrowing Transactions (Peminjaman)
 CREATE TABLE IF NOT EXISTS peminjaman (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    kode_peminjaman VARCHAR(20) NOT NULL UNIQUE,
     anggota_id INT NOT NULL,
     buku_id INT NOT NULL,
     user_id INT NOT NULL,
     tanggal_pinjam DATE NOT NULL,
     batas_kembali DATE NOT NULL,
     tanggal_dikembalikan DATE NULL DEFAULT NULL,
-    status ENUM('Dipinjam', 'Dikembalikan') DEFAULT 'Dipinjam',
+    status ENUM('Dipinjam', 'Dikembalikan', 'Terlambat') DEFAULT 'Dipinjam',
     denda INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (anggota_id) REFERENCES anggota(id) ON DELETE CASCADE,
@@ -55,38 +58,43 @@ CREATE TABLE IF NOT EXISTS peminjaman (
 -- Insert Initial Data
 -- --------------------------------------------------------
 
--- Insert 1 User (Petugas) - Password is 'admin123' (hashed using md5 for simplicity in native PHP if not using password_hash, but let's use md5('admin123') = '0192023a7bbd73250516f069df18b500')
--- Wait, using PHP's password_hash is better. I will insert plain password hashed with password_hash('admin123', PASSWORD_DEFAULT)
--- Let's use MD5 just to be safe it works directly or I can use a known bcrypt hash. 
--- Bcrypt for 'admin123': $2y$10$7/O5sM6wE/.2iHkIqC1yLu0m9h/z8R8Z/5L2Z.80U9.w.z7.W7/Z6
+-- Insert Users
+-- Password 'admin123' hashed using password_hash()
 INSERT INTO users (username, password, nama_lengkap, role) VALUES
-('admin', '$2y$10$7/O5sM6wE/.2iHkIqC1yLu0m9h/z8R8Z/5L2Z.80U9.w.z7.W7/Z6', 'Administrator Perpustakaan', 'petugas');
+('admin', '$2y$10$7/O5sM6wE/.2iHkIqC1yLu0m9h/z8R8Z/5L2Z.80U9.w.z7.W7/Z6', 'Petugas Perpustakaan', 'admin');
 
--- Insert 10 Books
-INSERT INTO buku (judul, pengarang, penerbit, tahun_terbit, isbn, stok) VALUES
-('Laskar Pelangi', 'Andrea Hirata', 'Bentang Pustaka', 2005, '978-979-3062-79-2', 5),
-('Bumi Manusia', 'Pramoedya Ananta Toer', 'Hasta Mitra', 1980, '978-979-97312-3-4', 3),
-('Ayat-Ayat Cinta', 'Habiburrahman El Shirazy', 'Republika', 2004, '978-979-3210-00-5', 7),
-('Negeri 5 Menara', 'A. Fuadi', 'Gramedia Pustaka Utama', 2009, '978-979-22-4861-6', 4),
-('Perahu Kertas', 'Dee Lestari', 'Bentang Pustaka', 2009, '978-979-1227-78-0', 6),
-('Filosofi Kopi', 'Dee Lestari', 'Truedee Books', 2006, '978-979-99859-0-7', 2),
-('Dilan: Dia adalah Dilanku Tahun 1990', 'Pidi Baiq', 'Pastel Books', 2014, '978-602-7870-41-3', 10),
-('Ronggeng Dukuh Paruk', 'Ahmad Tohari', 'Gramedia Pustaka Utama', 1982, '978-979-22-4113-6', 3),
-('Gadis Kretek', 'Ratih Kumala', 'Gramedia Pustaka Utama', 2012, '978-979-22-8141-5', 5),
-('Cantik Itu Luka', 'Eka Kurniawan', 'Gramedia Pustaka Utama', 2002, '978-979-22-9844-4', 4);
+-- Insert Books
+INSERT INTO buku (kode_buku, judul, pengarang, penerbit, tahun_terbit, kategori, stok) VALUES
+('BK001', 'Algoritma dan Pemrograman', 'Rinaldi Munir', 'Informatika', 2016, 'Komputer', 5),
+('BK002', 'Basis Data Relasional', 'Fathansyah', 'Informatika', 2018, 'Komputer', 3),
+('BK003', 'Pemrograman Web Dasar', 'Abdul Kadir', 'Andi', 2019, 'Komputer', 4),
+('BK004', 'Laskar Pelangi', 'Andrea Hirata', 'Bentang', 2005, 'Novel', 6),
+('BK005', 'Bumi Manusia', 'Pramoedya A. T.', 'Hasta Mitra', 1980, 'Novel', 2),
+('BK006', 'Fisika Dasar Jilid 1', 'Halliday & Resnick', 'Erlangga', 2010, 'Sains', 3),
+('BK007', 'Sejarah Indonesia Modern', 'M. C. Ricklefs', 'Serambi', 2008, 'Sejarah', 2),
+('BK008', 'Matematika Diskrit', 'Rinaldi Munir', 'Informatika', 2012, 'Komputer', 4),
+('BK009', 'Filosofi Teras', 'Henry Manampiring', 'Kompas', 2018, 'Pengembangan Diri', 5),
+('BK010', 'Atomic Habits', 'James Clear', 'Gramedia', 2019, 'Pengembangan Diri', 3);
 
--- Insert 5 Members
-INSERT INTO anggota (nomor_anggota, nama, jenis_kelamin, alamat, no_telp) VALUES
-('A001', 'Budi Santoso', 'L', 'Jl. Merdeka No. 1, Jakarta', '081234567890'),
-('A002', 'Siti Aminah', 'P', 'Jl. Jendral Sudirman No. 45, Bandung', '081298765432'),
-('A003', 'Andi Wijaya', 'L', 'Jl. Diponegoro No. 12, Surabaya', '085612349876'),
-('A004', 'Rini Yulianti', 'P', 'Jl. Pahlawan No. 8, Semarang', '087856781234'),
-('A005', 'Dewi Lestari', 'P', 'Jl. Gajah Mada No. 99, Yogyakarta', '089912345678');
+-- Insert Members
+INSERT INTO anggota (kode_anggota, nama, jenis_kelamin, alamat, no_telp, email) VALUES
+('AG001', 'Ahmad Fauzi', 'L', 'Jl. Merdeka No. 12', '081234567801', 'ahmad@mail.com'),
+('AG002', 'Siti Nurhaliza', 'P', 'Jl. Sudirman No. 5', '081234567802', 'siti@mail.com'),
+('AG003', 'Budi Santoso', 'L', 'Jl. Diponegoro No. 8', '081234567803', 'budi@mail.com'),
+('AG004', 'Dewi Lestari', 'P', 'Jl. Ahmad Yani No. 21', '081234567804', 'dewi@mail.com'),
+('AG005', 'Rizky Pratama', 'L', 'Jl. Gatot Subroto No. 3', '081234567805', 'rizky@mail.com');
 
--- Insert 5 Borrowing Transactions (Some returned, some still borrowed)
-INSERT INTO peminjaman (anggota_id, buku_id, user_id, tanggal_pinjam, batas_kembali, tanggal_dikembalikan, status, denda) VALUES
-(1, 1, 1, '2023-10-01', '2023-10-08', '2023-10-07', 'Dikembalikan', 0),
-(2, 3, 1, '2023-10-05', '2023-10-12', '2023-10-15', 'Dikembalikan', 3000), -- Late 3 days
-(3, 2, 1, '2023-10-10', '2023-10-17', NULL, 'Dipinjam', 0),
-(4, 5, 1, DATE_SUB(CURDATE(), INTERVAL 10 DAY), DATE_SUB(CURDATE(), INTERVAL 3 DAY), NULL, 'Dipinjam', 0), -- Overdue right now
-(5, 7, 1, DATE_SUB(CURDATE(), INTERVAL 2 DAY), DATE_ADD(CURDATE(), INTERVAL 5 DAY), NULL, 'Dipinjam', 0); -- Still borrowed, not overdue
+-- Insert Borrowing Transactions
+-- Note: Assuming user_id = 1 for the admin, and using internal IDs 1-5 for anggota_id and buku_id based on insertion order
+-- AG001 (id 1) borrows BK001 (id 1)
+-- AG002 (id 2) borrows BK004 (id 4)
+-- AG003 (id 3) borrows BK002 (id 2)
+-- AG004 (id 4) borrows BK009 (id 9)
+-- AG005 (id 5) borrows BK010 (id 10)
+
+INSERT INTO peminjaman (kode_peminjaman, anggota_id, buku_id, user_id, tanggal_pinjam, batas_kembali, tanggal_dikembalikan, denda, status) VALUES
+('PJ001', 1, 1, 1, '2026-07-20', '2026-07-27', '2026-08-01', 5000, 'Dikembalikan'),
+('PJ002', 2, 4, 1, '2026-07-25', '2026-08-01', '2026-08-01', 0, 'Dikembalikan'),
+('PJ003', 3, 2, 1, '2026-08-01', '2026-08-08', NULL, 0, 'Dipinjam'),
+('PJ004', 4, 9, 1, '2026-07-28', '2026-08-04', NULL, 0, 'Terlambat'),
+('PJ005', 5, 10, 1, '2026-08-08', '2026-08-15', NULL, 0, 'Dipinjam');
