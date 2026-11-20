@@ -46,13 +46,20 @@ require_once __DIR__ . '/../functions/helper.php';
         <!-- Sidebar -->
         <div class="col-12 col-md-3 col-lg-2 px-0 sidebar text-white">
             <h5 class="text-center mb-4 mt-2 fw-bold text-white"><i class="bi bi-book-half text-primary"></i> SIPERpus</h5>
+            <?php
+            // Tentukan root path relatif berdasarkan lokasi file yang sedang diakses.
+            // Jika file berada di subfolder /pages/, root adalah '../'
+            // Jika file berada di root, root adalah './'
+            $isInPages = strpos($_SERVER['SCRIPT_FILENAME'], DIRECTORY_SEPARATOR . 'pages' . DIRECTORY_SEPARATOR) !== false;
+            $root = $isInPages ? '../' : './';
+            ?>
             <div class="d-flex flex-row flex-md-column overflow-auto">
-                <a href="<?= $baseUrl ?>/index.php"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-                <a href="<?= $baseUrl ?>/pages/buku.php"><i class="bi bi-book me-2"></i> Data Buku</a>
-                <a href="<?= $baseUrl ?>/pages/anggota.php"><i class="bi bi-people me-2"></i> Data Anggota</a>
-                <a href="<?= $baseUrl ?>/pages/peminjaman.php"><i class="bi bi-arrow-left-right me-2"></i> Transaksi</a>
-                <a href="<?= $baseUrl ?>/pages/laporan.php"><i class="bi bi-file-earmark-text me-2"></i> Laporan</a>
-                <a href="<?= $baseUrl ?>/logout.php" class="text-danger mt-md-5"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+                <a href="<?= $root ?>index.php"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+                <a href="<?= $root ?>pages/buku.php"><i class="bi bi-book me-2"></i> Data Buku</a>
+                <a href="<?= $root ?>pages/anggota.php"><i class="bi bi-people me-2"></i> Data Anggota</a>
+                <a href="<?= $root ?>pages/peminjaman.php"><i class="bi bi-arrow-left-right me-2"></i> Transaksi</a>
+                <a href="<?= $root ?>pages/laporan.php"><i class="bi bi-file-earmark-text me-2"></i> Laporan</a>
+                <a href="<?= $root ?>logout.php" class="text-danger mt-md-5"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
             </div>
         </div>
         

@@ -9,7 +9,10 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /sertifikasi/login.php");
+    // Redirect ke login.php secara relatif — bekerja di lokal maupun Railway
+    $scriptPath = str_replace('\\', '/', $_SERVER['SCRIPT_FILENAME']);
+    $depth = (strpos($scriptPath, '/pages/') !== false) ? '../' : './';
+    header("Location: " . $depth . "login.php");
     exit();
 }
 ?>

@@ -1,18 +1,24 @@
 # nixpacks.toml
-# Konfigurasi build untuk Railway menggunakan Nixpacks.
-# Railway membaca file ini untuk menentukan runtime dan cara menjalankan aplikasi.
+# Konfigurasi build PHP untuk Railway.
+# Procfile yang menentukan cara start server (php -S).
 
 [phases.setup]
-nixPkgs = ["php82", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mysqli", "php82Extensions.mbstring", "php82Extensions.xml", "php82Extensions.curl", "apacheHttpd"]
+nixPkgs = [
+  "php82",
+  "php82Extensions.pdo",
+  "php82Extensions.pdo_mysql",
+  "php82Extensions.mysqli",
+  "php82Extensions.mbstring",
+  "php82Extensions.xml",
+  "php82Extensions.curl"
+]
 
 [phases.build]
 cmds = [
-  # Salin template koneksi.php — nilai sesungguhnya disuntikkan Railway via env vars
   "cp config/koneksi.php.example config/koneksi.php",
-  # Buat folder logs jika belum ada
   "mkdir -p logs",
   "chmod 775 logs"
 ]
 
 [start]
-cmd = "apache2 -d /etc/apache2 -f /etc/apache2/apache2.conf -D FOREGROUND"
+cmd = "php -S 0.0.0.0:$PORT -t . router.php"
