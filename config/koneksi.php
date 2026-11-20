@@ -73,8 +73,8 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 } catch (PDOException $e) {
-    if (ENVIRONMENT === 'development') {
-        die('<h1>Koneksi Database Gagal</h1><p>Detail: ' . htmlspecialchars($e->getMessage()) . '</p>');
+    if (ENVIRONMENT === 'development' || getenv('RAILWAY_DEBUG') === 'true') {
+        die('<h1>Koneksi Database Gagal</h1><p>Detail: ' . htmlspecialchars($e->getMessage()) . '</p><pre>HOST: ' . htmlspecialchars($host) . "\nDB: " . htmlspecialchars($database) . "\nUSER: " . htmlspecialchars($username) . '</pre>');
     } else {
         error_log('Database connection failed: ' . $e->getMessage());
         die('<h1>Sistem Sedang Gangguan</h1><p>Mohon maaf, layanan kami sedang mengalami gangguan. Silakan kembali beberapa saat lagi.</p>');
