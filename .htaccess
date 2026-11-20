@@ -1,0 +1,51 @@
+# .htaccess
+# Digunakan saat aplikasi dijalankan di Apache (XAMPP / Laragon / Shared Hosting).
+# Di Railway, file ini diabaikan karena server yang digunakan adalah PHP built-in server (Procfile).
+
+Options -Indexes
+
+# Aktifkan mod_rewrite
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Jika request adalah file atau folder yang benar-benar ada, serve langsung
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Semua request lain diteruskan ke index.php
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Sembunyikan file sensitif dari akses langsung via browser
+<FilesMatch "(\.env|koneksi\.php|\.gitignore|composer\.lock|nixpacks\.toml|Procfile)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Sembunyikan seluruh folder config dari akses publik
+<IfModule mod_authz_core.c>
+    <Directory "config">
+        Require all denied
+    </Directory>
+</IfModule>
+
+# Nonaktifkan akses ke folder logs
+<IfModule mod_authz_core.c>
+    <Directory "logs">
+        Require all denied
+    </Directory>
+</IfModule>
+
+# Aktifkan kompresi gzip untuk performa lebih baik
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+# Cache untuk aset statis
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>

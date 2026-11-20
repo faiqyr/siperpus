@@ -2,15 +2,46 @@
 /**
  * File: koneksi.php.example
  * Deskripsi: Template konfigurasi koneksi database.
- *            SALIN file ini menjadi koneksi.php, lalu isi sesuai environment Anda.
- *            File koneksi.php TIDAK akan di-push ke GitHub (sudah ada di .gitignore).
+ *            SALIN file ini menjadi koneksi.php, lalu sesuaikan nilai lokal Anda.
+ *
+ *            File koneksi.php TIDAK akan di-push ke GitHub (ada di .gitignore).
+ *            Di Railway (production), koneksi dikonfigurasi lewat Environment Variables —
+ *            file ini hanya dibutuhkan untuk development lokal.
  *
  * Author: @faiqyr
- * Versi: 1.0.0
+ * Versi: 1.1.0
+ *
+ * -----------------------------------------------------------------------
+ *  CARA PAKAI:
+ *  1. copy config\koneksi.php.example config\koneksi.php
+ *  2. Edit koneksi.php — isi $host, $username, $password, $database, $baseUrl
+ *  3. Jangan pernah commit koneksi.php ke git
+ * -----------------------------------------------------------------------
  */
 
-// Tentukan lingkungan: 'development' atau 'production'
-define('ENVIRONMENT', 'development');
+$isRailway = !empty(getenv('RAILWAY_ENVIRONMENT')) || !empty(getenv('MYSQLHOST'));
+
+if ($isRailway) {
+    define('ENVIRONMENT', 'production');
+
+    $host     = getenv('MYSQLHOST')     ?: getenv('DB_HOST');
+    $username = getenv('MYSQLUSER')     ?: getenv('DB_USER');
+    $password = getenv('MYSQLPASSWORD') ?: getenv('DB_PASS');
+    $database = getenv('MYSQLDATABASE') ?: getenv('DB_NAME');
+    $port     = getenv('MYSQLPORT')     ?: '3306';
+    $baseUrl  = getenv('APP_URL') ?: ('https://' . (getenv('RAILWAY_PUBLIC_DOMAIN') ?: 'localhost'));
+
+} else {
+    define('ENVIRONMENT', 'development');
+
+    // --- GANTI nilai berikut sesuai konfigurasi lokal Anda ---
+    $host     = "localhost";
+    $username = "root";           // username MySQL Anda
+    $password = "";               // password MySQL Anda (kosongkan jika tidak ada)
+    $database = "db_perpustakaan";
+    $port     = "3306";
+    $baseUrl  = "http://localhost/perpustakaan";  // sesuaikan nama folder di htdocs
+}
 
 if (ENVIRONMENT === 'development') {
     error_reporting(E_ALL);
@@ -22,24 +53,14 @@ if (ENVIRONMENT === 'development') {
     ini_set('error_log', __DIR__ . '/../logs/error.log');
 }
 
-// --- GANTI nilai di bawah ini sesuai environment Anda ---
-$host     = "localhost";       // Host database (biasanya localhost)
-$username = "root";            // Username database
-$password = "";                // Password database (JANGAN isi di sini, isi di koneksi.php Anda)
-$database = "db_perpustakaan"; // Nama database
-
-// URL dasar aplikasi (sesuaikan dengan nama folder di htdocs / public_html)
-// Contoh lokal  : http://localhost/perpustakaan
-// Contoh hosting: https://namadomain.com
-$baseUrl = "http://localhost/perpustakaan";
-
 try {
-    $conn = new PDO("mysql:host=$host;dbname=$database;charset=utf8", $username, $password);
+    $dsn  = "mysql:host={$host};port={$port};dbname={$database};charset=utf8";
+    $conn = new PDO($dsn, $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 } catch (PDOException $e) {
     if (ENVIRONMENT === 'development') {
-        die("<h1>Koneksi Gagal</h1><p>Detail: " . htmlspecialchars($e->getMessage()) . "</p>");
+        die("<h1>Koneksi Database Gagal</h1><p>Detail: " . htmlspecialchars($e->getMessage()) . "</p>");
     } else {
         error_log("Database connection failed: " . $e->getMessage());
         die("<h1>Sistem Sedang Gangguan</h1><p>Mohon kembali beberapa saat lagi.</p>");

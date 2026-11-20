@@ -1,21 +1,45 @@
-# Vendor / Dependencies
-vendor/
-node_modules/
+# =============================================================
+#  .gitignore — SIPERpus
+# =============================================================
 
-# Local Configurations — JANGAN pernah push file ini ke GitHub!
+# ------------------------------------------------------------------
+# [1] KREDENSIAL — JANGAN PERNAH push file ini ke GitHub!
+# ------------------------------------------------------------------
 config/koneksi.php
 config/koneksi_local.php
 .env
 .env.*
 
-# Temporary / OS Files
-.DS_Store
-Thumbs.db
+# ------------------------------------------------------------------
+# [2] RAILWAY — file konfigurasi ini HARUS masuk git (jangan ignore)
+# Nixpacks.toml, Procfile, router.php, dan koneksi.php.example
+# adalah bagian dari deployment dan aman untuk dipublikasikan.
+# ------------------------------------------------------------------
+# (tidak ada yang perlu diabaikan di sini, Railway files sudah aman)
+
+# ------------------------------------------------------------------
+# [3] DEPENDENCIES
+# ------------------------------------------------------------------
+vendor/
+node_modules/
+
+# ------------------------------------------------------------------
+# [4] LOGS & TEMPORARY FILES
+# ------------------------------------------------------------------
+logs/*.log
 *.log
 *.tmp
 *.bak
 scratch/
 
-# IDE Files
+# Biarkan folder logs/ tetap ada di repo (tapi kosong)
+!logs/.gitkeep
+
+# ------------------------------------------------------------------
+# [5] OS & IDE FILES
+# ------------------------------------------------------------------
+.DS_Store
+Thumbs.db
 .vscode/
 .idea/
+desktop.ini
