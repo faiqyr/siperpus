@@ -20,30 +20,39 @@ $isRailway = !empty(getenv('MYSQLHOST')) || !empty(getenv('RAILWAY_ENVIRONMENT')
 
 // DEBUG SEMENTARA — hapus setelah masalah terselesaikan
 if (getenv('RAILWAY_ENVIRONMENT') === 'production') {
-    $debugInfo  = "MYSQLHOST: "     . var_export(getenv('MYSQLHOST'), true)     . "\n";
-    $debugInfo .= "MYSQLUSER: "     . var_export(getenv('MYSQLUSER'), true)     . "\n";
-    $debugInfo .= "MYSQLDATABASE: " . var_export(getenv('MYSQLDATABASE'), true) . "\n";
-    $debugInfo .= "MYSQLPORT: "     . var_export(getenv('MYSQLPORT'), true)     . "\n";
-    $debugInfo .= "MYSQL_URL: "     . var_export(getenv('MYSQL_URL'), true)     . "\n";
+    $debugInfo  = "MYSQLHOST: "        . var_export(getenv('MYSQLHOST'), true)        . "\n";
+    $debugInfo .= "MYSQLUSER: "        . var_export(getenv('MYSQLUSER'), true)        . "\n";
+    $debugInfo .= "MYSQLDATABASE: "    . var_export(getenv('MYSQLDATABASE'), true)    . "\n";
+    $debugInfo .= "MYSQLPORT: "        . var_export(getenv('MYSQLPORT'), true)        . "\n";
+    $debugInfo .= "MYSQL_URL: "        . var_export(getenv('MYSQL_URL'), true)        . "\n";
     $debugInfo .= "MYSQL_PUBLIC_URL: " . var_export(getenv('MYSQL_PUBLIC_URL'), true) . "\n";
-    $debugInfo .= "isRailway: "     . var_export($isRailway, true)              . "\n";
+    $debugInfo .= "isRailway: "        . var_export($isRailway, true)                 . "\n";
     die('<h2>DEBUG MODE</h2><pre>' . htmlspecialchars($debugInfo) . '</pre>');
 }
 
 if ($isRailway) {
-    // =========================================================
-    //  PRODUCTION — Railway
-    //  Variabel ini otomatis tersedia setelah MySQL service
-    //  ditambahkan ke project yang sama di Railway dashboard.
-    // =========================================================
     define('ENVIRONMENT', 'production');
 
-    $host     = getenv('MYSQLHOST');
-    $username = getenv('MYSQLUSER');
-    $password = getenv('MYSQLPASSWORD');
-    $database = getenv('MYSQLDATABASE');
-    $port     = getenv('MYSQLPORT') ?: '3306';
-    $baseUrl  = getenv('APP_URL') ?: '';
+    // Coba parse MYSQL_PUBLIC_URL dulu (bisa diakses dari luar internal network)
+    // Format: mysql://user:password@host:port/database
+    $publicUrl = getenv('MYSQL_PUBLIC_URL');
+    if ($publicUrl) {
+        $parsed   = parse_url($publicUrl);
+        $host     = $parsed['host'];
+        $username = $parsed['user'];
+        $password = $parsed['pass'];
+        $database = ltrim($parsed['path'], '/');
+        $port     = $parsed['port'] ?? '3306';
+    } else {
+        // Fallback ke individual vars (via private network)
+        $host     = getenv('MYSQLHOST');
+        $username = getenv('MYSQLUSER');
+        $password = getenv('MYSQLPASSWORD');
+        $database = getenv('MYSQLDATABASE');
+        $port     = getenv('MYSQLPORT') ?: '3306';
+    }
+
+    $baseUrl = getenv('APP_URL') ?: '';
 
 } else {
     // =========================================================
