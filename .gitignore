@@ -2,9 +2,11 @@
 vendor/
 node_modules/
 
-# Local Configurations
+# Local Configurations — JANGAN pernah push file ini ke GitHub!
+config/koneksi.php
 config/koneksi_local.php
 .env
+.env.*
 
 # Temporary / OS Files
 .DS_Store

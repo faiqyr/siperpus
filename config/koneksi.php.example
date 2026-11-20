@@ -1,0 +1,48 @@
+<?php
+/**
+ * File: koneksi.php.example
+ * Deskripsi: Template konfigurasi koneksi database.
+ *            SALIN file ini menjadi koneksi.php, lalu isi sesuai environment Anda.
+ *            File koneksi.php TIDAK akan di-push ke GitHub (sudah ada di .gitignore).
+ *
+ * Author: @faiqyr
+ * Versi: 1.0.0
+ */
+
+// Tentukan lingkungan: 'development' atau 'production'
+define('ENVIRONMENT', 'development');
+
+if (ENVIRONMENT === 'development') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 0);
+    ini_set('log_errors', 1);
+    ini_set('error_log', __DIR__ . '/../logs/error.log');
+}
+
+// --- GANTI nilai di bawah ini sesuai environment Anda ---
+$host     = "localhost";       // Host database (biasanya localhost)
+$username = "root";            // Username database
+$password = "";                // Password database (JANGAN isi di sini, isi di koneksi.php Anda)
+$database = "db_perpustakaan"; // Nama database
+
+// URL dasar aplikasi (sesuaikan dengan nama folder di htdocs / public_html)
+// Contoh lokal  : http://localhost/perpustakaan
+// Contoh hosting: https://namadomain.com
+$baseUrl = "http://localhost/perpustakaan";
+
+try {
+    $conn = new PDO("mysql:host=$host;dbname=$database;charset=utf8", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+} catch (PDOException $e) {
+    if (ENVIRONMENT === 'development') {
+        die("<h1>Koneksi Gagal</h1><p>Detail: " . htmlspecialchars($e->getMessage()) . "</p>");
+    } else {
+        error_log("Database connection failed: " . $e->getMessage());
+        die("<h1>Sistem Sedang Gangguan</h1><p>Mohon kembali beberapa saat lagi.</p>");
+    }
+}
+?>
