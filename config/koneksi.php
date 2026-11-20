@@ -16,8 +16,17 @@
  */
 
 // --- Deteksi environment ---
-// Railway selalu menyediakan MYSQLHOST saat service MySQL ditambahkan ke project.
 $isRailway = !empty(getenv('MYSQLHOST')) || !empty(getenv('RAILWAY_ENVIRONMENT'));
+
+// DEBUG SEMENTARA — hapus setelah masalah terselesaikan
+if (getenv('RAILWAY_ENVIRONMENT') === 'production') {
+    $debugInfo  = "MYSQLHOST: "     . var_export(getenv('MYSQLHOST'), true)     . "\n";
+    $debugInfo .= "MYSQLUSER: "     . var_export(getenv('MYSQLUSER'), true)     . "\n";
+    $debugInfo .= "MYSQLDATABASE: " . var_export(getenv('MYSQLDATABASE'), true) . "\n";
+    $debugInfo .= "MYSQLPORT: "     . var_export(getenv('MYSQLPORT'), true)     . "\n";
+    $debugInfo .= "isRailway: "     . var_export($isRailway, true)              . "\n";
+    die('<h2>DEBUG MODE</h2><pre>' . htmlspecialchars($debugInfo) . '</pre>');
+}
 
 if ($isRailway) {
     // =========================================================
