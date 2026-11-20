@@ -8,32 +8,24 @@
  * CATATAN KEAMANAN:
  *   File ini AMAN di-push ke GitHub karena tidak mengandung password.
  *   Semua kredensial production disimpan di Railway Environment Variables.
- *   Untuk lokal, ubah nilai $localPassword sesuai setup MySQL Anda,
- *   atau buat config/koneksi_local.php yang di-ignore git.
+ *   Untuk lokal, ubah $password di bawah sesuai setup MySQL Anda,
+ *   atau buat config/koneksi_local.php (sudah ada di .gitignore).
  *
  * Author: @faiqyr
- * Versi: 1.2.0
+ * Versi: 1.3.0
  */
 
 // --- Deteksi environment ---
+// Railway selalu menyediakan MYSQLHOST saat MySQL service ditambahkan ke project.
 $isRailway = !empty(getenv('MYSQLHOST')) || !empty(getenv('RAILWAY_ENVIRONMENT'));
 
-// DEBUG SEMENTARA — hapus setelah masalah terselesaikan
-if (getenv('RAILWAY_ENVIRONMENT') === 'production') {
-    $debugInfo  = "MYSQLHOST: "        . var_export(getenv('MYSQLHOST'), true)        . "\n";
-    $debugInfo .= "MYSQLUSER: "        . var_export(getenv('MYSQLUSER'), true)        . "\n";
-    $debugInfo .= "MYSQLDATABASE: "    . var_export(getenv('MYSQLDATABASE'), true)    . "\n";
-    $debugInfo .= "MYSQLPORT: "        . var_export(getenv('MYSQLPORT'), true)        . "\n";
-    $debugInfo .= "MYSQL_URL: "        . var_export(getenv('MYSQL_URL'), true)        . "\n";
-    $debugInfo .= "MYSQL_PUBLIC_URL: " . var_export(getenv('MYSQL_PUBLIC_URL'), true) . "\n";
-    $debugInfo .= "isRailway: "        . var_export($isRailway, true)                 . "\n";
-    die('<h2>DEBUG MODE</h2><pre>' . htmlspecialchars($debugInfo) . '</pre>');
-}
-
 if ($isRailway) {
+    // =========================================================
+    //  PRODUCTION — Railway
+    // =========================================================
     define('ENVIRONMENT', 'production');
 
-    // Coba parse MYSQL_PUBLIC_URL dulu (bisa diakses dari luar internal network)
+    // Gunakan MYSQL_PUBLIC_URL jika tersedia (public endpoint)
     // Format: mysql://user:password@host:port/database
     $publicUrl = getenv('MYSQL_PUBLIC_URL');
     if ($publicUrl) {
@@ -44,7 +36,7 @@ if ($isRailway) {
         $database = ltrim($parsed['path'], '/');
         $port     = $parsed['port'] ?? '3306';
     } else {
-        // Fallback ke individual vars (via private network)
+        // Fallback ke individual vars (private network Railway)
         $host     = getenv('MYSQLHOST');
         $username = getenv('MYSQLUSER');
         $password = getenv('MYSQLPASSWORD');
@@ -57,9 +49,10 @@ if ($isRailway) {
 } else {
     // =========================================================
     //  DEVELOPMENT — Lokal (XAMPP / Laragon)
-    //  Jika ada file koneksi_local.php, file itu yang dipakai
-    //  sehingga tidak perlu mengubah file ini.
     // =========================================================
+
+    // Jika ada koneksi_local.php, file itu yang dipakai
+    // sehingga tidak perlu mengubah file ini.
     if (file_exists(__DIR__ . '/koneksi_local.php')) {
         require_once __DIR__ . '/koneksi_local.php';
         return;
@@ -69,7 +62,7 @@ if ($isRailway) {
 
     $host     = 'localhost';
     $username = 'root';
-    $password = '';                        // ganti jika MySQL lokal Anda pakai password
+    $password = '';            // ganti jika MySQL lokal Anda pakai password
     $database = 'db_perpustakaan';
     $port     = '3306';
     $baseUrl  = 'http://localhost/perpustakaan';
@@ -93,11 +86,11 @@ try {
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 } catch (PDOException $e) {
-    if (ENVIRONMENT === 'development' || getenv('RAILWAY_DEBUG') === 'true') {
-        die('<h1>Koneksi Database Gagal</h1><p>Detail: ' . htmlspecialchars($e->getMessage()) . '</p><pre>HOST: ' . htmlspecialchars($host) . "\nDB: " . htmlspecialchars($database) . "\nUSER: " . htmlspecialchars($username) . '</pre>');
+    if (ENVIRONMENT === 'development') {
+        die('<h1>Koneksi Database Gagal</h1><p>Detail: ' . htmlspecialchars($e->getMessage()) . '</p>');
     } else {
         error_log('Database connection failed: ' . $e->getMessage());
-        die('<h1>Sistem Sedang Gangguan</h1><p>Mohon maaf, layanan kami sedang mengalami gangguan. Silakan kembali beberapa saat lagi.</p>');
+        die('<h1>Sistem Sedang Gangguan</h1><p>Mohon maaf, layanan kami sedang mengalami gangguan internal. Silakan kembali beberapa saat lagi.</p>');
     }
 }
 ?>
