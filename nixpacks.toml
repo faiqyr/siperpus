@@ -1,6 +1,6 @@
 # nixpacks.toml
 # Konfigurasi build PHP untuk Railway.
-# Procfile yang menentukan cara start server (php -S).
+# koneksi.php sudah ada di repo dan membaca env vars — tidak perlu cp lagi.
 
 [phases.setup]
 nixPkgs = [
@@ -15,7 +15,6 @@ nixPkgs = [
 
 [phases.build]
 cmds = [
-  "cp config/koneksi.php.example config/koneksi.php",
   "mkdir -p logs",
   "chmod 775 logs"
 ]

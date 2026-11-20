@@ -5,7 +5,9 @@
 # ------------------------------------------------------------------
 # [1] KREDENSIAL — JANGAN PERNAH push file ini ke GitHub!
 # ------------------------------------------------------------------
-config/koneksi.php
+# config/koneksi.php TIDAK di-ignore lagi karena versi yang ada di repo
+# hanya membaca environment variables (tidak ada password hardcode).
+# Password asli HANYA ada di Railway Environment Variables.
 config/koneksi_local.php
 .env
 .env.*
