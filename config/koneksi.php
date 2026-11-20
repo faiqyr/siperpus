@@ -24,6 +24,8 @@ if (getenv('RAILWAY_ENVIRONMENT') === 'production') {
     $debugInfo .= "MYSQLUSER: "     . var_export(getenv('MYSQLUSER'), true)     . "\n";
     $debugInfo .= "MYSQLDATABASE: " . var_export(getenv('MYSQLDATABASE'), true) . "\n";
     $debugInfo .= "MYSQLPORT: "     . var_export(getenv('MYSQLPORT'), true)     . "\n";
+    $debugInfo .= "MYSQL_URL: "     . var_export(getenv('MYSQL_URL'), true)     . "\n";
+    $debugInfo .= "MYSQL_PUBLIC_URL: " . var_export(getenv('MYSQL_PUBLIC_URL'), true) . "\n";
     $debugInfo .= "isRailway: "     . var_export($isRailway, true)              . "\n";
     die('<h2>DEBUG MODE</h2><pre>' . htmlspecialchars($debugInfo) . '</pre>');
 }
